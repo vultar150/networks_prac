@@ -30,9 +30,9 @@ class MinimalTopo( Topo ):
         s2 = self.addSwitch( 's2' )
 
         # Add links between the switch and each host
-        self.addLink( s1, h1, bw=1100 )
+        self.addLink( s1, h1 )
         self.addLink( s1, s2, bw=1100, delay='220ms' )
-        self.addLink( s2, h2, bw=1100 )
+        self.addLink( s2, h2 )
 
 def runMinimalTopo():
     "Bootstrap a Mininet network using the Minimal Topology"
