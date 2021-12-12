@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+set terminal svg size 1000,500 name "Times" background "white"
+set output "backbone_reno.svg"
+set style data lines
+stats "tcp_probe_reno_h1-h2.txt" using 1:7 nooutput
+set xrange [STATS_min_x:STATS_max_x]
+set yrange [STATS_min_y:STATS_max_y]
+set xlabel "time (seconds)"
+set ylabel "Segments (cwnd, ssthresh)"
+plot "tcp_probe_reno_h1-h2.txt" using 1:7 title "snd cwnd", \
+"tcp_probe_reno_h1-h2.txt" using 1:($8>=2147483647 ? 0 : $8) title "snd ssthresh"
+set timestamp bottom
+show timestamp

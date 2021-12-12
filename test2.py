@@ -52,30 +52,30 @@ def run_iperf(client, server, port, cong, experiment_num):
     elif experiment_num == 2:
         cl, serv = 'h2', 'h3'
     else:
-        cl, serv = 'h1mix', 'h3mix'
+        cl, serv = 'h1', 'h3'
         
-    iperfServerOutput = "$PWD/" + "iperf_server_" + cong + "_" + serv + ".txt"
-    iperfClientOutput = "$PWD/" + "iperf_client_" + cong + "_" + cl + ".txt"
+    iperfServerOutput = "$PWD/" + "iperf_server_" + cong + "_" + cl + "-" + serv + ".txt"
+    iperfClientOutput = "$PWD/" + "iperf_client_" + cong + "_" + cl + "-" + serv + ".txt"
     tcpProbeOutput = "$PWD/" + "tcp_probe_" + cong + "_" + cl + "-" + serv + ".txt"
 
     os.system("sudo rm {} {} {}".format(iperfServerOutput, iperfClientOutput, tcpProbeOutput))
 
     server.cmd('iperf3 -s -p {} -f m -i 1 --logfile {} &'.format(port, iperfServerOutput))
-    sleep(5) # make sure all the servers start
+    sleep(3) # make sure all the servers start
     
+
     # start tcp_probe
-    os.system('modprobe tcp_probe port={}'.format(port))
-    sleep(2)
-    os.system('dd if=/proc/net/tcpprobe > {} & TCP_CAPTURING=$!'.format(tcpProbeOutput))
+    os.system('modprobe -r tcp_probe')
+    os.system('modprobe tcp_probe port={} full=1'.format(port))
+    os.system('dd if=/proc/net/tcpprobe > {} & TCPCAP=$!'.format(tcpProbeOutput))
+
+    # os.system('dd if=/proc/net/tcpprobe > {} & TCP_CAPTURING=$!'.format(tcpProbeOutput))
     
-    client.cmd('iperf3 -c {} -f m -i 1 -p {} -C {} -t 60 --logfile {}'.format(server.IP(), port, cong, iperfClientOutput))
+    client.cmd('iperf3 -c {} -f m -i 1 -p {} -C {} -t 90 --logfile {}'.format(server.IP(), port, cong, iperfClientOutput))
     server.cmd('killall iperf3')
-    sleep(1)
     
-    os.system('kill $TCP_CAPTURING')
-    sleep(1)
-    os.system('wait $TCP_CAPTURING 2>/dev/null')
-    sleep(1)
+    os.system('kill $TCPCAP')
+    os.system('wait $TCPCAP 2>/dev/null')
     os.system('modprobe -r tcp_probe')
 
 
@@ -85,6 +85,6 @@ net = Mininet( topo=topo,
 # configure_net(net)
 net.start()
 h1, h2, h3 = net.get('h1', 'h2', 'h3')
-run_iperf(h1, h3, 5001, "reno", 3)
+run_iperf(h1, h3, 5001, "cubic", 3)
 # CLI(net)
 net.stop()
