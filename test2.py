@@ -62,29 +62,35 @@ def run_iperf(client, server, port, cong, experiment_num):
 
     server.cmd('iperf3 -s -p {} -f m -i 1 --logfile {} &'.format(port, iperfServerOutput))
     sleep(3) # make sure all the servers start
-    
 
     # start tcp_probe
     os.system('modprobe -r tcp_probe')
     os.system('modprobe tcp_probe port={} full=1'.format(port))
-    os.system('dd if=/proc/net/tcpprobe > {} & TCPCAP=$!'.format(tcpProbeOutput))
-
-    # os.system('dd if=/proc/net/tcpprobe > {} & TCP_CAPTURING=$!'.format(tcpProbeOutput))
+    os.system('dd if=/proc/net/tcpprobe > {} & echo $! > pid.txt'.format(tcpProbeOutput))
     
     client.cmd('iperf3 -c {} -f m -i 1 -p {} -C {} -t 90 --logfile {}'.format(server.IP(), port, cong, iperfClientOutput))
     server.cmd('killall iperf3')
     
-    os.system('kill $TCPCAP')
-    os.system('wait $TCPCAP 2>/dev/null')
+    os.system('kill $(cat pid.txt)')
+    os.system('wait $(cat pid.txt) 2>/dev/null')
     os.system('modprobe -r tcp_probe')
+    os.remove('pid.txt')
 
 
 topo = MyTopo()
 net = Mininet( topo=topo,
                link=TCLink )
-# configure_net(net)
+
 net.start()
 h1, h2, h3 = net.get('h1', 'h2', 'h3')
+
+run_iperf(h1, h2, 5001, "reno", 1)
+run_iperf(h1, h2, 5001, "cubic", 1)
+
+run_iperf(h2, h3, 5001, "reno", 2)
+run_iperf(h2, h3, 5001, "cubic", 2)
+
+run_iperf(h1, h3, 5001, "reno", 3)
 run_iperf(h1, h3, 5001, "cubic", 3)
 # CLI(net)
 net.stop()
