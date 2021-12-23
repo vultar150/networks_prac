@@ -68,7 +68,7 @@ def run_iperf(client, server, port, cong, experiment_num):
     os.system('modprobe tcp_probe port={} full=1'.format(port))
     os.system('dd if=/proc/net/tcpprobe > {} & echo $! > pid.txt'.format(tcpProbeOutput))
     
-    client.cmd('iperf3 -c {} -f m -i 1 -p {} -C {} -t 90 --logfile {}'.format(server.IP(), port, cong, iperfClientOutput))
+    client.cmd('iperf3 -c {} -f m -i 1 -p {} -C {} -t 65 --logfile {}'.format(server.IP(), port, cong, iperfClientOutput))
     server.cmd('killall iperf3')
     
     os.system('kill $(cat pid.txt)')
@@ -84,8 +84,9 @@ net = Mininet( topo=topo,
 net.start()
 h1, h2, h3 = net.get('h1', 'h2', 'h3')
 
-# run_iperf(h1, h2, 5001, "reno", 1)
-run_iperf(h1, h2, 5001, "cubic", 1)
+
+# run_iperf(h1, h2, 5001, "cubic", 1)
+run_iperf(h1, h2, 5001, "reno", 1)
 
 # run_iperf(h2, h3, 5001, "reno", 2)
 # run_iperf(h2, h3, 5001, "cubic", 2)
