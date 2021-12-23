@@ -54,9 +54,9 @@ def run_iperf(client, server, port, cong, experiment_num):
     else:
         cl, serv = 'h1', 'h3'
         
-    iperfServerOutput = "$PWD/" + "iperf_server_" + cong + "_" + cl + "-" + serv + ".txt"
-    iperfClientOutput = "$PWD/" + "iperf_client_" + cong + "_" + cl + "-" + serv + ".txt"
-    tcpProbeOutput = "$PWD/" + "tcp_probe_" + cong + "_" + cl + "-" + serv + ".txt"
+    iperfServerOutput = "$PWD/" + "iperf_server_" + cong + "_" + cl + "_" + serv + ".txt"
+    iperfClientOutput = "$PWD/" + "iperf_client_" + cong + "_" + cl + "_" + serv + ".txt"
+    tcpProbeOutput = "$PWD/" + "tcp_probe_" + cong + "_" + cl + "_" + serv + ".txt"
 
     os.system("sudo rm {} {} {}".format(iperfServerOutput, iperfClientOutput, tcpProbeOutput))
 
@@ -84,13 +84,13 @@ net = Mininet( topo=topo,
 net.start()
 h1, h2, h3 = net.get('h1', 'h2', 'h3')
 
-run_iperf(h1, h2, 5001, "reno", 1)
+# run_iperf(h1, h2, 5001, "reno", 1)
 run_iperf(h1, h2, 5001, "cubic", 1)
 
-run_iperf(h2, h3, 5001, "reno", 2)
-run_iperf(h2, h3, 5001, "cubic", 2)
+# run_iperf(h2, h3, 5001, "reno", 2)
+# run_iperf(h2, h3, 5001, "cubic", 2)
 
-run_iperf(h1, h3, 5001, "reno", 3)
-run_iperf(h1, h3, 5001, "cubic", 3)
+# run_iperf(h1, h3, 5001, "reno", 3)
+# run_iperf(h1, h3, 5001, "cubic", 3)
 # CLI(net)
 net.stop()
