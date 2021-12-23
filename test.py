@@ -44,8 +44,7 @@ def runMinimalTopo():
     # a remote controller.
     net = Mininet(
         topo=topo,
-        link=TCLink,
-        autoSetMacs=True )
+        link=TCLink )
 
     # Actually start the network
     net.start()

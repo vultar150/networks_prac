@@ -30,13 +30,13 @@ class MyTopo( Topo ):
         
         # s1->s2
         self.addLink( leftSwitch, middleSwitch, 
-                      bw=1100, loss=0.01, delay='220ms', max_queue_size=1800)
+                      bw=1800, loss=0.003, delay='140ms', max_queue_size=1300)
     
         self.addLink( middleSwitch, middleHost )
         
         # s2->s3
         self.addLink( middleSwitch, rightSwitch,
-                      bw=20, loss=2.1, delay='1.3ms', max_queue_size=60)
+                      bw=25, loss=2.0, delay='1.0ms', max_queue_size=80)
         
         self.addLink( rightSwitch, rightHost )        
 
