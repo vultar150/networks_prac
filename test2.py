@@ -30,13 +30,13 @@ class MyTopo( Topo ):
         
         # s1->s2
         self.addLink( leftSwitch, middleSwitch, 
-                      bw=1800, loss=0.003, delay='140ms', max_queue_size=1300)
+                      bw=1700, loss=0.00008, delay='140ms', max_queue_size=900)
     
         self.addLink( middleSwitch, middleHost )
         
         # s2->s3
         self.addLink( middleSwitch, rightSwitch,
-                      bw=25, loss=2.0, delay='1.0ms', max_queue_size=80)
+                      bw=45, loss=2.3, delay='1.2ms', max_queue_size=95)
         
         self.addLink( rightSwitch, rightHost )        
 
@@ -85,13 +85,13 @@ net.start()
 h1, h2, h3 = net.get('h1', 'h2', 'h3')
 
 
+# run_iperf(h1, h2, 5001, "reno", 1)
 # run_iperf(h1, h2, 5001, "cubic", 1)
-run_iperf(h1, h2, 5001, "reno", 1)
 
 # run_iperf(h2, h3, 5001, "reno", 2)
 # run_iperf(h2, h3, 5001, "cubic", 2)
 
 # run_iperf(h1, h3, 5001, "reno", 3)
 # run_iperf(h1, h3, 5001, "cubic", 3)
-# CLI(net)
+CLI(net)
 net.stop()
